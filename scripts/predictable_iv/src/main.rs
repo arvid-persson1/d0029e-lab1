@@ -1,11 +1,17 @@
 use hex::{decode, encode};
-use std::{io::stdin, iter::repeat_n, process::exit};
+use std::{
+    io::{Write, stdin, stdout},
+    iter::repeat_n,
+    process::exit,
+};
 
 const CANDIDATES: &[&str] = &["Yes", "No"];
 const BLOCK_SIZE: u8 = 128 / 8;
 
 fn prompt(msg: &str) -> Vec<u8> {
-    println!("{msg}");
+    print!("{msg}");
+    stdout().flush().unwrap();
+
     // Allocating a new string every time is unnecessary.
     // It should at least be initialized with the appropriate capacity.
     let mut buf = String::new();
@@ -14,11 +20,11 @@ fn prompt(msg: &str) -> Vec<u8> {
 }
 
 fn main() {
-    let cipher_target = prompt("Bob's ciphertext:");
-    let mut iv_last = prompt("Last IV:");
+    let cipher_target = prompt("Bob's ciphertext: ");
+    let mut iv_last = prompt("Last IV: ");
 
     for candidate in CANDIDATES {
-        let iv_next = prompt("Next IV:");
+        let iv_next = prompt("Next IV: ");
 
         let guess = {
             let pad = BLOCK_SIZE - candidate.len() as u8 % BLOCK_SIZE;
@@ -32,9 +38,9 @@ fn main() {
                 .collect::<Vec<_>>();
             encode(g)
         };
-        println!("Try {guess}");
+        println!("Try:\n{guess}");
 
-        let cipher = prompt("Your ciphertext:");
+        let cipher = prompt("Your ciphertext: ");
         if cipher == cipher_target {
             println!("Success: \"{candidate}\"");
             exit(0);
