@@ -1,13 +1,16 @@
 use std::{
     env::args,
     io::Write,
-    process::{Command, Stdio},
+    process::{Command, Stdio, exit},
 };
 
 const PLAIN1: &str = "This message is 30 bytes long.";
 const PLAIN2: &str = "Here is a text of same length.";
+// NOTE: "8889", not "8899".
 const KEY: &str = "00112233445566778889aabbccddeeff";
 
+// This should be done through a dedicated encryption/decryption
+// library, but here's keeping it simple.
 fn cipher(iv: &str, plain: &str) -> Vec<u8> {
     let mut child = Command::new("openssl")
         .args(["enc", "-aes-128-cfb", "-K", KEY, "-iv", iv])
@@ -46,5 +49,6 @@ fn main() {
         println!("Success");
     } else {
         eprintln!("Failure\nraw: {PLAIN2}\nrec: {plain2_reconstructed}");
+        exit(1);
     }
 }

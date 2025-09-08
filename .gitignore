@@ -1,3 +1,4 @@
 *.pdf
 images/
+**/Cargo.lock
 **/target/
